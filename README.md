@@ -12,7 +12,7 @@
 ## 📁 Project Structure
 
 ```
-src/app/
+src/app/https://classroom.github.com/a/wuU_gSAO
 ├── schemas/
 │   └── bookingSchema.js
 └── components/

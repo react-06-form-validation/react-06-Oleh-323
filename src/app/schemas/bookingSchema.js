@@ -11,16 +11,12 @@ export const createBookingSchema = (availableTimeSlots = []) =>
     eventName: z.string().min(2, 'Event name must be at least 2 characters long'),
     eventDate: z.preprocess(
       (value) => {
-        if (value instanceof Date) {
-          return value.toISOString().split('T')[0];
-        }
-        if (typeof value === 'string') {
-          return value;
+        if (typeof value === 'string' || value instanceof Date) {
+          return new Date(value);
         }
         return value;
       },
-      z.string().refine((value) => {
-        const date = new Date(value);
+      z.date().refine((date) => {
         const now = new Date();
         now.setHours(0, 0, 0, 0);
         return !Number.isNaN(date.getTime()) && date > now;

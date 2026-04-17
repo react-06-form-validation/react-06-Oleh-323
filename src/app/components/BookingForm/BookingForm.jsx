@@ -2,11 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { createBookingSchema } from '../../schemas/bookingSchema';
-import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import ErrorMessage from '../ErrorMessage';
 import styles from './BookingForm.module.css';
 
 export default function BookingForm() {
@@ -20,7 +19,9 @@ export default function BookingForm() {
       .then((response) => response.json())
       .then((data) => {
         if (!isMounted) return;
-        const slotsFromApi = Array.isArray(data) ? data : Array.isArray(data?.timeSlots) ? data.timeSlots : [];
+
+        const slotsFromApi = Array.isArray(data)
+          ? data : Array.isArray(data?.timeSlots) ? data.timeSlots : [];
         setTimeSlots(slotsFromApi);
       })
       .catch(() => {
@@ -45,9 +46,8 @@ export default function BookingForm() {
     formState: { errors },
   } = useForm({ resolver });
 
-  const onSubmit = (data) => {
+  const onSubmit = () => {
     alert('Booking successful!');
-    console.log('Booking Data', data);
   };
 
   return (
@@ -64,7 +64,7 @@ export default function BookingForm() {
         <label htmlFor="bookerEmail" className={styles.label}>
           Booker Email
         </label>
-        <input id="bookerEmail" className={styles.input} type="email" {...register('bookerEmail')} />
+        <input id="bookerEmail" type="email" className={styles.input} {...register('bookerEmail')} />
         <ErrorMessage message={errors.bookerEmail?.message?.toString()} />
       </div>
 
@@ -80,7 +80,7 @@ export default function BookingForm() {
         <label htmlFor="eventDate" className={styles.label}>
           Event Date
         </label>
-        <input id="eventDate" className={styles.input} type="date" {...register('eventDate')} />
+        <input id="eventDate" type="date" className={styles.input} {...register('eventDate')} />
         <ErrorMessage message={errors.eventDate?.message?.toString()} />
       </div>
 
@@ -88,7 +88,7 @@ export default function BookingForm() {
         <label htmlFor="numberOfGuests" className={styles.label}>
           Number of Guests
         </label>
-        <input id="numberOfGuests" className={styles.input} type="number" {...register('numberOfGuests')} />
+        <input id="numberOfGuests" type="number" className={styles.input} {...register('numberOfGuests')} />
         <ErrorMessage message={errors.numberOfGuests?.message?.toString()} />
       </div>
 
@@ -96,7 +96,12 @@ export default function BookingForm() {
         <label htmlFor="timeSlot" className={styles.label}>
           Time Slot
         </label>
-        <select id="timeSlot" className={styles.input} {...register('timeSlot')}>
+        <select
+          id="timeSlot"
+          className={styles.input}
+          disabled={isLoading}
+          {...register('timeSlot')}
+        >
           <option value="">Select a time slot</option>
           {timeSlots.map((slot) => (
             <option key={slot} value={slot}>
@@ -104,16 +109,14 @@ export default function BookingForm() {
             </option>
           ))}
         </select>
-        {isLoading && <p>Loading time slots...</p>}
-        {!isLoading && timeSlots.length === 0 && <p>No time slots available.</p>}
         <ErrorMessage message={errors.timeSlot?.message?.toString()} />
       </div>
 
       <div className={styles.inputGroup}>
         <label htmlFor="eventLink" className={styles.label}>
-          Event Link (Online)
+          Event Link
         </label>
-        <input id="eventLink" className={styles.input} type="url" {...register('eventLink')} />
+        <input id="eventLink" type="url" className={styles.input} {...register('eventLink')} />
         <ErrorMessage message={errors.eventLink?.message?.toString()} />
       </div>
 
